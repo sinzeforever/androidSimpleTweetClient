@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border_rec"
+    android:paddingTop="10dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="10dp"
+    android:id="@+id/rlTweetCard"
+>
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:minHeight="40dp"
+        android:id="@+id/ivUserIcon"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="10dp" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Name"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="36dp"
+        android:id="@+id/tvUserName"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivUserIcon"
+        android:layout_toEndOf="@+id/ivUserIcon" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text body"
+        android:id="@+id/tvText"
+        android:textSize="16dp"
+        android:textColor="#000"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:layout_marginTop="5dp"
+        android:layout_below="@+id/tvUserName"
+        android:layout_alignLeft="@+id/tvUserName"
+        android:layout_alignStart="@+id/tvUserName" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        android:textSize="13dp"
+        android:textColor="#888"
+        android:layout_marginRight="10dp"
+        android:id="@+id/tvPostTime"
+        android:layout_alignTop="@+id/tvUserName"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>

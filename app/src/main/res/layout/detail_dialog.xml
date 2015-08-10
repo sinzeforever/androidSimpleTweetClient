@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/border_rec"
+    android:padding="10dp"
+    android:id="@+id/rlDetailCard"
+    >
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:minHeight="40dp"
+        android:id="@+id/ivDetailUserIcon"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="User Name"
+        android:layout_marginLeft="15dp"
+        android:layout_marginStart="36dp"
+        android:id="@+id/tvDetailUserName"
+        android:textSize="16dp"
+        android:textStyle="bold"
+        android:textColor="#000"
+        android:layout_alignParentTop="true"
+        android:layout_toRightOf="@+id/ivDetailUserIcon"
+        android:layout_toEndOf="@+id/ivDetailUserIcon" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/tvDetailUserLocation"
+        android:textSize="12dp"
+        android:textStyle="bold"
+        android:textColor="#999"
+        android:layout_below="@+id/tvDetailUserName"
+        android:layout_alignLeft="@+id/tvDetailUserName"
+        android:layout_alignStart="@+id/tvDetailUserName" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Text body"
+        android:id="@+id/tvDetailText"
+        android:textSize="16dp"
+        android:textColor="#000"
+        android:autoLink="all"
+        android:linksClickable="true"
+        android:layout_marginBottom="10dp"
+        android:layout_below="@+id/ivDetailUserIcon"
+        android:layout_alignLeft="@+id/ivDetailUserIcon"
+        android:layout_alignStart="@+id/ivDetailUserIcon" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="time"
+        android:textSize="13dp"
+        android:textColor="#888"
+        android:id="@+id/tvDetailPostTime"
+        android:layout_below="@+id/tvDetailText"
+        android:layout_alignLeft="@+id/tvDetailText"
+        android:layout_alignStart="@+id/tvDetailText" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/llTweetImgWrapper"
+        android:layout_below="@+id/tvDetailPostTime"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="20dp">
+    </LinearLayout>
+
+    <EditText
+        android:layout_width="match_parent"
+        android:hint="Reply to the tweet..."
+        android:textColor="#333"
+        android:textColorHint="#bbb"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/llTweetImgWrapper"
+        android:layout_alignLeft="@+id/tvDetailPostTime"
+        android:layout_alignStart="@+id/tvDetailPostTime"
+        android:layout_marginTop="54dp"
+        android:singleLine="true"
+        android:padding="10dp"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/tweet_input"
+        android:id="@+id/etReply" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reply"
+        android:textSize="16dp"
+        android:id="@+id/tvReplayBtn"
+        android:background="@color/twitterBlue"
+        android:padding="8dp"
+        android:textColor="#fff"
+        android:layout_alignTop="@+id/etReply"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_alignBottom="@+id/etReply" />
+
+</RelativeLayout>
