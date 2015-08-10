@@ -36,7 +36,9 @@ The following **bonus** features are implemented:
 
 The following **additional** features are implemented:
 
-* [x] List anything else that you can get done to improve the app functionality!
+* [x] Auto reload once the network is back
+* [x] Auto disable typing when reaching maximum character when posting
+* [x] Round user icon
 
 ## Video Walkthrough 
 
