@@ -1,6 +1,5 @@
 package com.sinzeforever.mysimpletweets.models;
 import android.database.Cursor;
-import android.util.Log;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -51,18 +50,15 @@ public class Tweet {
             tweet.createdAt = json.getString("created_at");
             // check reply id
             String replyStr = json.getString("in_reply_to_user_id");
-            Log.d("my", tweet.text + "  :  " + replyStr);
             tweet.replyId = (replyStr != null && !replyStr.isEmpty() && !replyStr.equals("null") ?  Long.valueOf(replyStr) : 0);
             tweet.user = new TwitterUser(json.getJSONObject("user"));
             // parse tweet image url
             tweet.imageUrls = new ArrayList<String>();
             JSONObject entities = json.getJSONObject("entities");
-            Log.d("my", "entities:" + entities.toString());
             if (entities.has("media")) {
                 JSONArray mediaArray = entities.getJSONArray("media");
                 for(int i = 0; i < mediaArray.length(); i++) {
                     JSONObject media = mediaArray.getJSONObject(i);
-                    Log.d("my", "image : " + media.getString("media_url"));
                     tweet.imageUrls.add(media.getString("media_url"));
                 }
             }
