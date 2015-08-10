@@ -42,13 +42,10 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-<img src='simpleTweet.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+![Video Walkthrough](simpleTweet.gif) 
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
-## Notes
-
-Describe any challenges encountered while building the app.
 
 ## Open-source libraries used
 
