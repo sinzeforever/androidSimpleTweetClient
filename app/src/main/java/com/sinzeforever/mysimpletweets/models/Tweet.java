@@ -88,7 +88,7 @@ public class Tweet {
             try {
                 JSONObject tweetJSON = jsonArray.getJSONObject(i);
                 Tweet tweet = Tweet.createFromJSON(tweetJSON);
-                if (tweet != null && tweet.getReplyId() <= 0) {
+                if (tweet != null) {
                     tweets.add(tweet);
                 }
             } catch (JSONException e) {

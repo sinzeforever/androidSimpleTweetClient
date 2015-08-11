@@ -111,6 +111,7 @@ public class DetailDialog extends DialogFragment {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d("my", "reply succeed");
                             Toast.makeText(context, "Tweet Successfully", Toast.LENGTH_SHORT).show();
+                            ((TimelineActivity) context).rePopulateTimeline();
                             dismiss();
                         }
 
