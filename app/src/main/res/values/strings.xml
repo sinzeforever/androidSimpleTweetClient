@@ -3,9 +3,11 @@
 
     <string name="app_name">Simple Tweets</string>
     <string name="login_label">LOGIN TWITTER</string>
-    <string name="title_activity_timeline">Home Timeline</string>
+    <string name="title_activity_timeline">Home</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
-    <string name="title_activity_detail">DetailActivity</string>
+    <string name="title_activity_detail">Tweet</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_profile">Profile</string>
 
 </resources>

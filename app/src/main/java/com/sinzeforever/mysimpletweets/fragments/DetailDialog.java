@@ -1,4 +1,4 @@
-package com.sinzeforever.mysimpletweets.activities;
+package com.sinzeforever.mysimpletweets.fragments;
 
 import android.app.DialogFragment;
 import android.content.Context;
@@ -111,7 +111,7 @@ public class DetailDialog extends DialogFragment {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d("my", "reply succeed");
                             Toast.makeText(context, "Tweet Successfully", Toast.LENGTH_SHORT).show();
-                            ((TimelineActivity) context).rePopulateTimeline();
+                            // ((TimelineActivity) context).rePopulateTimeline();
                             dismiss();
                         }
 

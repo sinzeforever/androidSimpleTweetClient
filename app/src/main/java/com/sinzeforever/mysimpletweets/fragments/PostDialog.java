@@ -1,4 +1,4 @@
-package com.sinzeforever.mysimpletweets.activities;
+package com.sinzeforever.mysimpletweets.fragments;
 
 import android.app.Activity;
 import android.app.DialogFragment;
@@ -35,7 +35,7 @@ public class PostDialog extends DialogFragment {
     Activity activity;
     int textCount = 0;
     final int TEXT_COUNT_LIMIT = 140;
-    static PostDialog newInstance(Activity activity) {
+    public static PostDialog newInstance(Activity activity) {
         PostDialog fragment = new PostDialog();
         fragment.activity = activity;
         fragment.client = TwitterApplication.getRestClient();
@@ -75,7 +75,7 @@ public class PostDialog extends DialogFragment {
                         public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
                             Log.d("my", "post content succeed");
                             Toast.makeText(activity, "Tweet Successfully", Toast.LENGTH_SHORT).show();
-                            ((TimelineActivity) activity).rePopulateTimeline();
+                            // ((TimelineActivity) activity).rePopulateTimeline();
                             dismiss();
                         }
 

@@ -51,11 +51,41 @@ public class TwitterClient extends OAuthBaseClient {
         params.put("exclude_replies", false);
         Long maxId = filter.getHomeMaxIdId();
         if (maxId > 0) {
-            params.put("max_id", filter.getHomeMaxIdId());
+            params.put("max_id", maxId);
         }
         // Execute Request
         getClient().get(apiUrl, params, handler);
     }
+
+    // Get Mention Timeline /statuses/mentions_timeline.json
+    // count = 25
+    // since_id=1
+    public void getMentionTimeline(AsyncHttpResponseHandler handler) {
+        String apiUrl = getApiUrl("statuses/mentions_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("count", filter.getMentionCount());
+        params.put("exclude_replies", false);
+        Long maxId = filter.getMentionMaxId();
+        if (maxId > 0) {
+            params.put("max_id", maxId);
+        }
+        // Execute Request
+        getClient().get(apiUrl, params, handler);
+    }
+
+    public void getUserTimeline(AsyncHttpResponseHandler handler, String screenName) {
+        String apiUrl = getApiUrl("statuses/user_timeline.json");
+        RequestParams params = new RequestParams();
+        params.put("count", filter.getUserCount());
+        params.put("screen_name", screenName);
+        Long maxId = filter.getUserMaxId();
+        if (maxId > 0) {
+            params.put("max_id", maxId);
+        }
+        // Execute Request
+        getClient().get(apiUrl, params, handler);
+    }
+
 
     public void getUserProfile(AsyncHttpResponseHandler handler) {
         Log.d("my", "call getting user profile api~~~");

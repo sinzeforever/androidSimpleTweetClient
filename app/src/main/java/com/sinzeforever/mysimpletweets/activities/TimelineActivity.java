@@ -1,26 +1,25 @@
 package com.sinzeforever.mysimpletweets.activities;
 
 import android.app.ActionBar;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.opengl.Visibility;
 import android.os.Bundle;
-import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.astuetz.PagerSlidingTabStrip;
 import com.loopj.android.http.JsonHttpResponseHandler;
 import com.sinzeforever.mysimpletweets.R;
-import com.sinzeforever.mysimpletweets.adapters.TweetsArrayAdapter;
-import com.sinzeforever.mysimpletweets.libs.EndlessScrollListener;
+import com.sinzeforever.mysimpletweets.adapters.TimelineFragmentPagerAdapter;
+import com.sinzeforever.mysimpletweets.fragments.PostDialog;
+import com.sinzeforever.mysimpletweets.fragments.TimelineFragment;
 import com.sinzeforever.mysimpletweets.libs.Util;
-import com.sinzeforever.mysimpletweets.models.Tweet;
-import com.sinzeforever.mysimpletweets.models.TwitterApplication;
 import com.sinzeforever.mysimpletweets.models.TwitterClient;
 import com.sinzeforever.mysimpletweets.models.TwitterUser;
 import com.sinzeforever.mysimpletweets.sqlite.TweetDatabase;
@@ -29,18 +28,12 @@ import org.apache.http.Header;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
-public class TimelineActivity extends ActionBarActivity {
+public class TimelineActivity extends ActionBarActivity implements TimelineFragment.OnFragmentInteractionListener{
 
     private final int POST_DIALOG_CODE = 98;
     private TwitterClient client;
-    private ArrayList<Tweet> tweets;
-    private TweetsArrayAdapter tweetsArrayAdapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private TweetDatabase db;
     private boolean resetDB = true;
-    private ListView lvTweets;
     private TwitterUser user;
 
     @Override
@@ -49,17 +42,11 @@ public class TimelineActivity extends ActionBarActivity {
         setContentView(R.layout.activity_timeline);
         // set action bar
         setUpActionBar();
-        // set up adapter
-        setUpTweetAdapter();
         // set up db
-        setUpDatabase();
+        // setUpDatabase();
 
-        client = TwitterApplication.getRestClient(); // singleton client
-        // getUserProfile();
-        populateTimeline();
-
-        // set up swipe and refresh layout
-        setUpSwipeAndRefreshLayout();
+        // set up pager for home timeline and mention timeline
+        setUpPager();
     }
 
     @Override
@@ -68,7 +55,6 @@ public class TimelineActivity extends ActionBarActivity {
         // handle networking change
         TextView tvWarning = (TextView) findViewById(R.id.tvWarning);
         if (Util.isOnline(this)) {
-            rePopulateTimeline();
             tvWarning.setVisibility(View.GONE);
         } else {
             // show error msg
@@ -76,45 +62,25 @@ public class TimelineActivity extends ActionBarActivity {
         }
     }
 
+    private  void setUpPager() {
+        // Get the ViewPager and set it's PagerAdapter so that it can display items
+        ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
+        viewPager.setAdapter(new TimelineFragmentPagerAdapter(getSupportFragmentManager()));
+
+        // Give the PagerSlidingTabStrip the ViewPager
+        PagerSlidingTabStrip tabsStrip = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+        // Attach the view pager to the tab strip
+        tabsStrip.setViewPager(viewPager);
+        // setList(MentionTimelineFragment.newInstance());
+    }
+
     private void setUpActionBar() {
+        getSupportActionBar().setElevation(0);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.twitterBlue)));
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
-    }
-
-    private void setUpTweetAdapter() {
-        // find list view
-        lvTweets = (ListView) findViewById(R.id.lvTweets);
-        // create array
-        tweets = new ArrayList<>();
-        // construct the adapter to from data source
-        tweetsArrayAdapter = new TweetsArrayAdapter(this, tweets);
-        // set adapter
-        lvTweets.setAdapter(tweetsArrayAdapter);
-        // set infinite scroll events
-        lvTweets.setOnScrollListener(new EndlessScrollListener() {
-            @Override
-            public void onLoadMore(int page, int totalItemsCount) {
-                if (Util.isOnline(getBaseContext()) == true) {
-                    populateTimeline();
-                }
-            }
-        });
-    }
-
-    private void setUpSwipeAndRefreshLayout() {
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.slTimeline);
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                if (Util.isOnline(getBaseContext())) {
-                    rePopulateTimeline();
-                } else {
-                    swipeRefreshLayout.setRefreshing(false);
-                }
-            }
-        });
+        TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+        tvTitle.setText("Twitter Home");
     }
 
     private void setUpDatabase() {
@@ -137,80 +103,12 @@ public class TimelineActivity extends ActionBarActivity {
             }
         });
     }
-    // Send an API request to get the timeline json
-    // Fill the listview by creating the tweet objects from the json
-    private void populateTimeline() {
-        if (Util.isOnline(this) == true) {
-            // is online, get data from net
-            client.getHomeTimeline(new JsonHttpResponseHandler() {
-                // SUCCESS
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                    // parse data and save into adapter
-                    handleHomeTimelineResponse(response);
-                }
 
-                // FAILURE
-                @Override
-                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                    Log.d("my", "get home timeline API failed, " + errorResponse.toString());
-                    // since api fail, get data from db
-                    populateTimelineFromDB();
-                }
-            });
-        } else {
-            //  Log.d("my", "use db");
-            populateTimelineFromDB();
-        }
-    }
-
-    public void rePopulateTimeline() {
-        if (Util.isOnline(this) == false) {
-            // if not online
-            return ;
-        }
-        client.getFilter().resetHomeTimeline();
-        client.getHomeTimeline(new JsonHttpResponseHandler() {
-            // SUCCESS
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("my", response.toString());
-                // reset
-                tweetsArrayAdapter.clear();
-                resetDB();
-                // parse data and save into adapter
-                handleHomeTimelineResponse(response);
-                // move the scroll position to the top
-                lvTweets.setSelection(0);
-                // stop refreshing
-                swipeRefreshLayout.setRefreshing(false);
-            }
-
-            // FAILURE
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("my", "re-get home timeline API failed" + errorResponse.toString());
-                // since api fail, get data from db
-                populateTimelineFromDB();
-            }
-        });
-    }
-
+/*
     public void populateTimelineFromDB() {
         Log.d("my", "Get tweets from DB");
         ArrayList<Tweet> dbTweets = db.getAllTweets();
         tweetsArrayAdapter.addAll(dbTweets);
-    }
-
-    public void handleHomeTimelineResponse(JSONArray response) {
-        // create tweets
-        ArrayList<Tweet> newTweets= Tweet.createFromJSONArray(response);
-        // update adapter
-        tweetsArrayAdapter.addAll(newTweets);
-        // update filter for pagination
-        client.getFilter().updateHomeMaxId(newTweets);
-        // save new tweets
-        saveAllTweetsToDB(newTweets);
     }
 
     public void resetDB() {
@@ -224,7 +122,7 @@ public class TimelineActivity extends ActionBarActivity {
             db.insertTweet(newTweets.get(i));
         }
     }
-
+*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -243,6 +141,21 @@ public class TimelineActivity extends ActionBarActivity {
 
     }
 
+    public void viewUserProfile(TwitterUser user) {
+        Intent intent = new Intent(this, ProfileActivity.class);
+        intent.putExtra("user", user);
+        startActivity(intent);
+    }
+
+    // set list fragment
+    /*
+    private void setList(Fragment pageFragment) {
+        FragmentManager fragmentManager = getFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(R.id.flMainWindow, pageFragment);
+        fragmentTransaction.commit();
+    }
+    */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -252,5 +165,11 @@ public class TimelineActivity extends ActionBarActivity {
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+        // do nothing
+        return;
     }
 }

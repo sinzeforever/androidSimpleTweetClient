@@ -13,9 +13,11 @@ import android.widget.TextView;
 
 import com.makeramen.roundedimageview.RoundedTransformationBuilder;
 import com.sinzeforever.mysimpletweets.R;
-import com.sinzeforever.mysimpletweets.activities.DetailDialog;
+import com.sinzeforever.mysimpletweets.activities.TimelineActivity;
+import com.sinzeforever.mysimpletweets.fragments.DetailDialog;
 import com.sinzeforever.mysimpletweets.libs.Util;
 import com.sinzeforever.mysimpletweets.models.Tweet;
+import com.sinzeforever.mysimpletweets.models.TwitterUser;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Transformation;
 
@@ -58,6 +60,12 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         } else {
             ivUserIcon.setImageResource(R.drawable.ic_user);
         }
+        ivUserIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickUser(tweet.getUser());
+            }
+        });
 
         // Text Body
         TextView tvText = (TextView) convertView.findViewById(R.id.tvText);
@@ -66,6 +74,12 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
         // User Name
         TextView tvUserName = (TextView) convertView.findViewById(R.id.tvUserName);
         tvUserName.setText(tweet.getUser().getName());
+        tvUserName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickUser(tweet.getUser());
+            }
+        });
 
         // set post time
         TextView tvPostTime = (TextView) convertView.findViewById(R.id.tvPostTime);
@@ -88,5 +102,9 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
             DetailDialog detailDialog = DetailDialog.newInstance(context, tweet);
             detailDialog.show(((Activity) context).getFragmentManager(), "tweeet detail");
         }
+    }
+
+    public void onClickUser(TwitterUser twitterUser) {
+        ((TimelineActivity) context).viewUserProfile(twitterUser);
     }
 }
