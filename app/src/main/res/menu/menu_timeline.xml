@@ -3,6 +3,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.sinzeforever.mysimpletweets.activities.TimelineActivity">
     <item
+        android:id="@+id/miProfile"
+        android:icon="@drawable/ic_userw"
+        android:onClick="onClickProfile"
+        app:showAsAction="always"
+        android:orderInCategory="4"
+        android:title="MY PROFILE">
+    </item>
+    <item
         android:id="@+id/miPost"
         android:icon="@drawable/ic_feather"
         android:onClick="onClickPost"

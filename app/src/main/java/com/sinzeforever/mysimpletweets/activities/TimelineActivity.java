@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,6 +21,7 @@ import com.sinzeforever.mysimpletweets.adapters.TimelineFragmentPagerAdapter;
 import com.sinzeforever.mysimpletweets.fragments.PostDialog;
 import com.sinzeforever.mysimpletweets.fragments.TimelineFragment;
 import com.sinzeforever.mysimpletweets.libs.Util;
+import com.sinzeforever.mysimpletweets.models.TwitterApplication;
 import com.sinzeforever.mysimpletweets.models.TwitterClient;
 import com.sinzeforever.mysimpletweets.models.TwitterUser;
 import com.sinzeforever.mysimpletweets.sqlite.TweetDatabase;
@@ -31,7 +33,6 @@ import org.json.JSONObject;
 public class TimelineActivity extends ActionBarActivity implements TimelineFragment.OnFragmentInteractionListener{
 
     private final int POST_DIALOG_CODE = 98;
-    private TwitterClient client;
     private TweetDatabase db;
     private boolean resetDB = true;
     private TwitterUser user;
@@ -56,13 +57,15 @@ public class TimelineActivity extends ActionBarActivity implements TimelineFragm
         TextView tvWarning = (TextView) findViewById(R.id.tvWarning);
         if (Util.isOnline(this)) {
             tvWarning.setVisibility(View.GONE);
+            getSupportActionBar().show();
         } else {
             // show error msg
             tvWarning.setVisibility(View.VISIBLE);
+            getSupportActionBar().hide();
         }
     }
 
-    private  void setUpPager() {
+    private void setUpPager() {
         // Get the ViewPager and set it's PagerAdapter so that it can display items
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
         viewPager.setAdapter(new TimelineFragmentPagerAdapter(getSupportFragmentManager()));
@@ -75,33 +78,18 @@ public class TimelineActivity extends ActionBarActivity implements TimelineFragm
     }
 
     private void setUpActionBar() {
-        getSupportActionBar().setElevation(0);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.twitterBlue)));
-        getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
-        getSupportActionBar().setCustomView(R.layout.action_bar);
-        TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
-        tvTitle.setText("Twitter Home");
+        if (getSupportActionBar().isShowing() == true) {
+            getSupportActionBar().setElevation(0);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(getResources().getColor(R.color.twitterBlue)));
+            getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
+            getSupportActionBar().setCustomView(R.layout.action_bar);
+            TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
+            tvTitle.setText("Twitter Home");
+        }
     }
 
     private void setUpDatabase() {
         db = new TweetDatabase(this);
-    }
-
-    // get user profile
-    private void getUserProfile() {
-        client.getUserProfile(new JsonHttpResponseHandler() {
-            // SUCCESS
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("my", response.toString());
-            }
-
-            // FAILURE
-            @Override
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
-                Log.d("my", "get user profile API failed, " + errorResponse.toString());
-            }
-        });
     }
 
 /*
@@ -135,6 +123,28 @@ public class TimelineActivity extends ActionBarActivity implements TimelineFragm
         if (Util.isOnline(this)) {
             PostDialog postDialog = PostDialog.newInstance(this);
             postDialog.show(getFragmentManager(), "post dialog");
+        } else {
+            Toast.makeText(this, "Please go online first", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    public void onClickProfile(MenuItem mi) {
+        if (Util.isOnline(this)) {
+            TwitterApplication.getRestClient().getUserProfile(new JsonHttpResponseHandler() {
+                // SUCCESS
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                    user = new TwitterUser(response);
+                    viewUserProfile(user);
+                }
+
+                // FAILURE
+                @Override
+                public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
+                    Log.d("my", "verify credentials api fail" + errorResponse.toString());
+                }
+            });
         } else {
             Toast.makeText(this, "Please go online first", Toast.LENGTH_SHORT).show();
         }

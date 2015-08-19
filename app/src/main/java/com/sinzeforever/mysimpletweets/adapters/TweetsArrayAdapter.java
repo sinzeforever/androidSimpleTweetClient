@@ -107,4 +107,6 @@ public class TweetsArrayAdapter extends ArrayAdapter<Tweet> {
     public void onClickUser(TwitterUser twitterUser) {
         ((TimelineActivity) context).viewUserProfile(twitterUser);
     }
+
+
 }

@@ -60,28 +60,34 @@ public class TwitterClientFilter {
 
     // update home max id by tweet lists
     public void updateHomeMaxId(ArrayList<Tweet> tweets) {
-        updateHomeMaxId(tweets.get(tweets.size() - 1).getId());
+        if (tweets.size() > 0) {
+            updateHomeMaxId(tweets.get(tweets.size() - 1).getId());
+        }
     }
 
     public void updateMentionMaxId(long input) {
         if (mentionMaxId > input || mentionMaxId < 0) {
-            mentionMaxId = input;
+            mentionMaxId = input - 1;
         }
     }
 
     // update home max id by tweet lists
     public void updateMentionMaxId(ArrayList<Tweet> tweets) {
-        updateMentionMaxId(tweets.get(tweets.size() - 1).getId());
+        if (tweets.size() > 0) {
+            updateMentionMaxId(tweets.get(tweets.size() - 1).getId());
+        }
     }
 
     public void updateUserMaxId(long input) {
         if (userMaxId > input || userMaxId < 0) {
-            userMaxId = input;
+            userMaxId = input - 1;
         }
     }
 
     // update home max id by tweet lists
     public void updateUserMaxId(ArrayList<Tweet> tweets) {
-        updateUserMaxId(tweets.get(tweets.size() - 1).getId());
+        if (tweets.size() > 0) {
+            updateUserMaxId(tweets.get(tweets.size() - 1).getId());
+        }
     }
 }

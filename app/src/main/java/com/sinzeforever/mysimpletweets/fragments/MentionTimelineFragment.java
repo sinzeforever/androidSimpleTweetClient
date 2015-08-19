@@ -18,12 +18,14 @@ public class MentionTimelineFragment extends TimelineFragment {
     public static MentionTimelineFragment newInstance() {
         MentionTimelineFragment fragment = new MentionTimelineFragment();
         fragment.client = TwitterApplication.getRestClient();
+        Log.d("my", "create mention fragment");
         return fragment;
     }
 
     @Override
     public void populateTimeline() {
         if (Util.isOnline(getActivity()) == true) {
+            showProgressBar();
             // is online, get data from net
             client.getMentionTimeline(new JsonHttpResponseHandler() {
                 // SUCCESS
@@ -31,19 +33,19 @@ public class MentionTimelineFragment extends TimelineFragment {
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     // parse data and save into adapter
                     handleMentionTimelineResponse(response);
+                    Log.d("my", "number of mention: " + response.length());
+                    hideProgressBar();
                 }
 
                 // FAILURE
                 @Override
                 public void onFailure(int statusCode, Header[] headers, Throwable throwable, JSONObject errorResponse) {
                     Log.d("my", "get mention timeline API failed, " + errorResponse.toString());
-                    // since api fail, get data from db
-                    // populateTimelineFromDB();
+                    hideProgressBar();
                 }
             });
         } else {
-            //  Log.d("my", "use db");
-            // populateTimelineFromDB();
+            hideProgressBar();
         }
     }
 
@@ -53,12 +55,13 @@ public class MentionTimelineFragment extends TimelineFragment {
             // if not online
             return;
         }
+        showProgressBar();
         client.getFilter().resetMentionTimeline();
         client.getMentionTimeline(new JsonHttpResponseHandler() {
             // SUCCESS
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("my", response.toString());
+                Log.d("my", "number of re-mention: " + response.length());
                 // reset
                 tweetsArrayAdapter.clear();
                 // parse data and save into adapter
@@ -67,6 +70,7 @@ public class MentionTimelineFragment extends TimelineFragment {
                 lvTweets.setSelection(0);
                 // stop refreshing
                 swipeRefreshLayout.setRefreshing(false);
+                hideProgressBar();
             }
 
             // FAILURE
@@ -75,6 +79,7 @@ public class MentionTimelineFragment extends TimelineFragment {
                 Log.d("my", "re-get mention timeline API failed" + errorResponse.toString());
                 // since api fail, get data from db
                 // populateTimelineFromDB();
+                hideProgressBar();
             }
         });
     }

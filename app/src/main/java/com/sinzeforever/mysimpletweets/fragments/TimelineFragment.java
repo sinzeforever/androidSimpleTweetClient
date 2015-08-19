@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 
 import com.sinzeforever.mysimpletweets.R;
 import com.sinzeforever.mysimpletweets.adapters.TweetsArrayAdapter;
@@ -26,13 +27,36 @@ public class TimelineFragment extends Fragment {
     protected ListView lvTweets;
     protected View rootView;
     protected SwipeRefreshLayout swipeRefreshLayout;
+    protected ProgressBar progressBarFooter;
+    private  LayoutInflater inflater;
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setUpTweetAdapter();
         setUpSwipeAndRefreshLayout();
-        populateTimeline();
+        //set up progress bar
+        setUpProgressBar();
+        rePopulateTimeline();
+    }
+
+    protected void setUpProgressBar() {
+        // Inflate the footer
+        View footer = inflater.inflate(
+                R.layout.footer_progress, null);
+        // Find the progressbar within footer
+        progressBarFooter = (ProgressBar)
+                footer.findViewById(R.id.pbFooterLoading);
+        // Add footer to ListView before setting adapter
+        lvTweets.addFooterView(footer);
+    }
+
+    protected void showProgressBar() {
+        progressBarFooter.setVisibility(View.VISIBLE);
+    }
+
+    protected void hideProgressBar() {
+        progressBarFooter.setVisibility(View.GONE);
     }
 
     private void setUpTweetAdapter() {
@@ -81,6 +105,7 @@ public class TimelineFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        this.inflater = inflater;
         rootView = inflater.inflate(R.layout.fragment_timeline, container, false);
         return rootView;
     }

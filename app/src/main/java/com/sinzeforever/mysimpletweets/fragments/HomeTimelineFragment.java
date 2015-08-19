@@ -23,6 +23,7 @@ public class HomeTimelineFragment extends TimelineFragment {
 
     @Override
     public void populateTimeline() {
+        showProgressBar();
         if (Util.isOnline(getActivity()) == true) {
             // is online, get data from net
             client.getHomeTimeline(new JsonHttpResponseHandler() {
@@ -31,6 +32,7 @@ public class HomeTimelineFragment extends TimelineFragment {
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     // parse data and save into adapter
                     handleHomeTimelineResponse(response);
+                    hideProgressBar();
                 }
 
                 // FAILURE
@@ -39,11 +41,11 @@ public class HomeTimelineFragment extends TimelineFragment {
                     Log.d("my", "get home timeline API failed, " + errorResponse.toString());
                     // since api fail, get data from db
                     // populateTimelineFromDB();
+                    hideProgressBar();
                 }
             });
         } else {
-            //  Log.d("my", "use db");
-            // populateTimelineFromDB();
+            hideProgressBar();
         }
     }
 
@@ -53,6 +55,7 @@ public class HomeTimelineFragment extends TimelineFragment {
             // if not online
             return;
         }
+        showProgressBar();
         client.getFilter().resetHomeTimeline();
         client.getHomeTimeline(new JsonHttpResponseHandler() {
             // SUCCESS
@@ -67,6 +70,7 @@ public class HomeTimelineFragment extends TimelineFragment {
                 lvTweets.setSelection(0);
                 // stop refreshing
                 swipeRefreshLayout.setRefreshing(false);
+                hideProgressBar();
             }
 
             // FAILURE
@@ -75,6 +79,7 @@ public class HomeTimelineFragment extends TimelineFragment {
                 Log.d("my", "re-get home timeline API failed" + errorResponse.toString());
                 // since api fail, get data from db
                 // populateTimelineFromDB();
+                hideProgressBar();
             }
         });
     }

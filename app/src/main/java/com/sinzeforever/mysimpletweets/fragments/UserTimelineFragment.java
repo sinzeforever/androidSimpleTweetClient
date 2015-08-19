@@ -26,13 +26,16 @@ public class UserTimelineFragment extends TimelineFragment {
     @Override
     public void populateTimeline() {
         if (Util.isOnline(getActivity()) == true) {
+            showProgressBar();
             // is online, get data from net
             client.getUserTimeline(new JsonHttpResponseHandler() {
                 // SUCCESS
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
                     // parse data and save into adapter
+                    Log.d("my", "number of user timeline: " + response.length());
                     handleUserTimelineResponse(response);
+                    hideProgressBar();
                 }
 
                 // FAILURE
@@ -41,11 +44,13 @@ public class UserTimelineFragment extends TimelineFragment {
                     Log.d("my", "get user timeline API failed, " + errorResponse.toString());
                     // since api fail, get data from db
                     // populateTimelineFromDB();
+                    hideProgressBar();
                 }
             }, user.getScreenName());
         } else {
             //  Log.d("my", "use db");
             // populateTimelineFromDB();
+            hideProgressBar();
         }
     }
 
@@ -55,12 +60,13 @@ public class UserTimelineFragment extends TimelineFragment {
             // if not online
             return;
         }
+        showProgressBar();
         client.getFilter().resetUserTimeline();
         client.getUserTimeline(new JsonHttpResponseHandler() {
             // SUCCESS
             @Override
             public void onSuccess(int statusCode, Header[] headers, JSONArray response) {
-                Log.d("my", response.toString());
+                Log.d("my", "number of user timeline: " + response.length());
                 // reset
                 tweetsArrayAdapter.clear();
                 // parse data and save into adapter
@@ -69,6 +75,7 @@ public class UserTimelineFragment extends TimelineFragment {
                 lvTweets.setSelection(0);
                 // stop refreshing
                 swipeRefreshLayout.setRefreshing(false);
+                hideProgressBar();
             }
 
             // FAILURE
@@ -77,6 +84,7 @@ public class UserTimelineFragment extends TimelineFragment {
                 Log.d("my", "re-get user timeline API failed" + errorResponse.toString());
                 // since api fail, get data from db
                 // populateTimelineFromDB();
+                hideProgressBar();
             }
         }, user.getScreenName());
     }

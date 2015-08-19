@@ -128,7 +128,6 @@ public class DetailDialog extends DialogFragment {
 
         // set up media images
         if (tweet.getImageUrls() != null) {
-            Log.d("my", "tweet url count   " + tweet.getImageUrls().size());
             for (int i = 0; i < tweet.getImageUrls().size(); i++) {
                 ImageView ivTweetImg = new ImageView(context);
                 ivTweetImg.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));

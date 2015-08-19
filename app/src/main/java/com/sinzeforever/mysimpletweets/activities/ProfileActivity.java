@@ -29,14 +29,14 @@ public class ProfileActivity extends ActionBarActivity implements TimelineFragme
         // parse user
         parseUser();
 
-        // set data
-        setProfileData();
-
         // set Action bar
         setUpActionBar();
 
         // get user timeline
         setUpTimeline();
+
+        // set data
+        setProfileData();
     }
 
     private void setUpActionBar() {
@@ -44,7 +44,7 @@ public class ProfileActivity extends ActionBarActivity implements TimelineFragme
         getSupportActionBar().setDisplayOptions(ActionBar.DISPLAY_SHOW_CUSTOM);
         getSupportActionBar().setCustomView(R.layout.action_bar);
         TextView tvTitle = (TextView) findViewById(R.id.tvTitle);
-        tvTitle.setText("Profile");
+        tvTitle.setText("@" + user.getScreenName());
     }
 
     private void parseUser() {
@@ -82,10 +82,12 @@ public class ProfileActivity extends ActionBarActivity implements TimelineFragme
     }
 
     private void setUpTimeline() {
-        FragmentManager fragmentManager = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.replace(R.id.flUserTimeline, UserTimelineFragment.newInstance(user));
-        fragmentTransaction.commit();
+        if (getSupportActionBar().isShowing() == true) {
+            FragmentManager fragmentManager = getSupportFragmentManager();
+            FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+            fragmentTransaction.replace(R.id.flUserTimeline, UserTimelineFragment.newInstance(user));
+            fragmentTransaction.commit();
+        }
     }
 
     @Override
@@ -112,7 +114,6 @@ public class ProfileActivity extends ActionBarActivity implements TimelineFragme
 
     @Override
     public void onFragmentInteraction() {
-        // do nothing
         return;
     }
 }
